@@ -1,0 +1,9 @@
+.venv/
+.tmp/
+.tools/
+__pycache__/
+downloads/
+*.part
+build/
+dist/
+*.spec
