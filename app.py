@@ -12,6 +12,8 @@ import tempfile
 import time
 from urllib.parse import urlsplit
 
+from brand import COLORS, draw_mark
+
 ROOT = Path(__file__).resolve().parent
 FORMATS = ("mp3", "m4a", "wav")
 
@@ -82,16 +84,13 @@ def main() -> None:
     from tkinter.scrolledtext import ScrolledText
 
     root = tk.Tk()
-    root.title("Link to Audio")
-    root.geometry("900x820")
-    root.minsize(760, 810)
-    bg, panel, field = "#10131b", "#191e2b", "#111622"
-    text, muted, accent = "#f1f4fc", "#929eb6", "#a99aff"
+    root.title("RevTek Link2Audio")
+    root.geometry("920x850")
+    root.minsize(800, 830)
+    bg, panel, field = COLORS["ink"], COLORS["panel"], COLORS["field"]
+    text, muted, accent = COLORS["text"], COLORS["muted"], COLORS["accent"]
     root.configure(bg=bg)
-    icon = tk.PhotoImage(width=32, height=32)
-    icon.put(bg, to=(0, 0, 32, 32))
-    for x, height in ((5, 8), (11, 18), (17, 26), (23, 14)):
-        icon.put(accent, to=(x, (32-height)//2, x+4, (32+height)//2))
+    icon = tk.PhotoImage(file=str(ROOT / "assets" / "app-icon.png"))
     root.iconphoto(True, icon)
     style = ttk.Style(root)
     style.theme_use("clam")
@@ -102,17 +101,17 @@ def main() -> None:
     style.configure("Card.TLabel", background=panel)
     style.configure("Hint.TLabel", background=panel, foreground=muted, font=("Segoe UI", 9))
     style.configure("TEntry", fieldbackground=field, foreground=text, insertcolor=text,
-                    bordercolor="#30394e", lightcolor="#30394e", darkcolor="#30394e", padding=11)
+                    bordercolor=COLORS["border"], lightcolor=COLORS["border"], darkcolor=COLORS["border"], padding=11)
     style.map("TEntry", bordercolor=[("focus", accent)], foreground=[("disabled", muted)])
     style.configure("TButton", font=("Segoe UI", 10), padding=(16, 10),
-                    background="#293147", foreground=text, borderwidth=0, focuscolor=accent)
-    style.map("TButton", background=[("active", "#35415b"), ("disabled", "#202637")],
-              foreground=[("disabled", "#62708a")])
-    style.configure("Primary.TButton", background=accent, foreground="#18122f", font=("Segoe UI", 11, "bold"))
-    style.map("Primary.TButton", background=[("active", "#bfb3ff"), ("disabled", "#39354f")],
-              foreground=[("disabled", "#817a9f")])
-    style.configure("Horizontal.TProgressbar", background=accent, troughcolor="#2b3244",
-                    borderwidth=0, lightcolor=accent, darkcolor=accent, thickness=6)
+                    background=COLORS["button"], foreground=text, borderwidth=0, focuscolor=accent)
+    style.map("TButton", background=[("disabled", COLORS["disabled"]), ("active", COLORS["button_hover"])],
+              foreground=[("disabled", COLORS["disabled_text"])])
+    style.configure("Primary.TButton", background=accent, foreground=bg, font=("Segoe UI", 11, "bold"))
+    style.map("Primary.TButton", background=[("disabled", COLORS["disabled"]), ("pressed", COLORS["accent_pressed"]), ("active", COLORS["accent_hover"])],
+              foreground=[("disabled", COLORS["disabled_text"])])
+    style.configure("Horizontal.TProgressbar", background=COLORS["info"], troughcolor=COLORS["separator"],
+                    borderwidth=0, lightcolor=COLORS["info"], darkcolor=COLORS["info"], thickness=6)
 
     frame = ttk.Frame(root, padding=(32, 22))
     frame.pack(fill="both", expand=True)
@@ -120,13 +119,18 @@ def main() -> None:
     frame.rowconfigure(6, weight=1)
     brand = ttk.Frame(frame)
     brand.grid(row=0, sticky="ew", pady=(0, 20))
-    ttk.Label(brand, text="◖)))", foreground=accent, font=("Segoe UI", 19, "bold")).pack(side="left")
-    ttk.Label(brand, text="  LINK TO AUDIO", font=("Segoe UI", 11, "bold")).pack(side="left")
-    ttk.Label(brand, text="VIDEO → AUDIO", style="Muted.TLabel", font=("Segoe UI", 9)).pack(side="right")
+    mark = tk.Canvas(brand, width=52, height=52, bg=bg, highlightthickness=0)
+    mark.pack(side="left", padx=(0, 10))
+    draw_mark(mark)
+    wordmark = ttk.Frame(brand)
+    wordmark.pack(side="left")
+    ttk.Label(wordmark, text="REVTEK STUDIOS", font=("Segoe UI", 15, "bold")).pack(anchor="w")
+    ttk.Label(wordmark, text="TOOLS FOR YOUR CREATIVE FLOW", style="Muted.TLabel", font=("Segoe UI", 8)).pack(anchor="w", pady=(2, 0))
+    ttk.Label(brand, text="RTS  /  AUDIO", foreground=muted, font=("Segoe UI", 9, "bold")).pack(side="right")
     hero = ttk.Frame(frame)
     hero.grid(row=1, sticky="ew", pady=(0, 22))
-    ttk.Label(hero, text="Keep the sound.", font=("Segoe UI", 29, "bold")).pack(anchor="w")
-    ttk.Label(hero, text="Your favorite videos, ready to listen. Just paste a link and make it yours.",
+    ttk.Label(hero, text="Link2Audio.", font=("Segoe UI", 29, "bold")).pack(anchor="w")
+    ttk.Label(hero, text="Keep the sound. Paste a video link and take your audio with you.",
               style="Muted.TLabel").pack(anchor="w", pady=(5, 0))
 
     card = ttk.Frame(frame, style="Card.TFrame", padding=22)
@@ -157,15 +161,17 @@ def main() -> None:
         formats_row.columnconfigure(col, weight=1, uniform="format")
         button = tk.Radiobutton(formats_row, text=f"{value.upper()}\n{description}", variable=fmt,
                                 value=value, indicatoron=False, bg=field, fg=muted,
-                                selectcolor="#39314f", activebackground="#39314f", activeforeground=text,
-                                disabledforeground="#59637a", font=("Segoe UI", 10),
-                                relief="flat", bd=0, highlightthickness=1, highlightbackground="#30394e",
+                                selectcolor=COLORS["selected"], activebackground=COLORS["selected"], activeforeground=text,
+                                disabledforeground=COLORS["disabled_text"], font=("Segoe UI", 10),
+                                relief="flat", bd=0, highlightthickness=1, highlightbackground=COLORS["border"],
                                 highlightcolor=accent, cursor="hand2", pady=12, takefocus=True)
         button.grid(row=0, column=col, sticky="ew", padx=(0 if col == 0 else 5, 0 if col == 2 else 5))
         format_buttons.append(button)
     def highlight_format(*_):
         for value, button in zip(FORMATS, format_buttons):
-            button.configure(fg=text if fmt.get() == value else muted)
+            selected = fmt.get() == value
+            button.configure(fg=COLORS["selected_text"] if selected else muted,
+                             highlightbackground=accent if selected else COLORS["border"])
     fmt.trace_add("write", highlight_format)
     highlight_format()
     ttk.Label(card, text="03   SAVE SOMEWHERE GOOD", style="Card.TLabel", font=("Segoe UI", 9, "bold")).grid(row=5, sticky="w", pady=(22, 12))
@@ -215,7 +221,7 @@ def main() -> None:
     log.grid_remove()
     footer = ttk.Frame(frame)
     footer.grid(row=7, sticky="ew", pady=(8, 0))
-    ttk.Label(footer, text="Made for listening.", foreground=accent, font=("Segoe UI", 9)).pack(side="left")
+    ttk.Label(footer, text="REVTEK STUDIOS  /  Made for listening.", foreground=muted, font=("Segoe UI", 9)).pack(side="left")
     ttk.Label(footer, text="Download only content you own or have permission to use.",
               style="Muted.TLabel", font=("Segoe UI", 8)).pack(side="right")
     events = queue.Queue()
@@ -260,7 +266,7 @@ def main() -> None:
             args = download_args(url.get().strip(), str(target), fmt.get())
             target.mkdir(parents=True, exist_ok=True)
             cancelled = False
-            with tempfile.NamedTemporaryFile(prefix="link-to-audio-", suffix=".log", delete=False) as output:
+            with tempfile.NamedTemporaryFile(prefix="revtek-link2audio-", suffix=".log", delete=False) as output:
                 log_path = output.name
             process = subprocess.Popen(
                 worker_command(args, log_path),
@@ -317,7 +323,7 @@ def main() -> None:
                 progress.stop()
                 progress.configure(mode="determinate")
                 badge.set("CANCELLED" if cancelled else "SAVED" if value == 0 else "FAILED")
-                badge_label.configure(foreground=muted if cancelled else "#82dbb2" if value == 0 else "#ff9baf")
+                badge_label.configure(foreground=COLORS["amber"] if cancelled else COLORS["success"] if value == 0 else COLORS["error"])
                 if value != 0 and not cancelled and not details_visible.get():
                     toggle_details()
                 status.set("Cancelled · Partial files can be resumed by trying again." if cancelled else

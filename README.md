@@ -1,6 +1,9 @@
-# RevTek YTDL · Link to Audio
+# RevTek Link2Audio
 
 **[Download for Windows (.exe)](https://github.com/RevTekStudios/RevTek-YTDL/releases/latest/download/Link-to-Audio.exe)** · [All releases](https://github.com/RevTekStudios/RevTek-YTDL/releases)
+
+The published download above may still use the previous Link to Audio name until a new release is published.
+The current local build is **RevTek Link2Audio**.
 
 Download the executable and double-click it. No installer, Python, or separate
 media tools required. Windows 10/11, 64-bit.
@@ -16,7 +19,7 @@ ID, and existing files are not overwritten.
 
 ## Run
 
-For the standalone Windows version, double-click **dist/Link to Audio.exe**.
+For the standalone Windows version, double-click **dist/RevTek Link2Audio.exe**.
 It contains Python, FFmpeg, FFprobe, and Node.js, so no separate installation
 is required. Copy the single executable wherever you want to keep it.
 The app extracts its bundled files to a temporary directory while running;
@@ -62,7 +65,7 @@ Install Node.js on the build machine, then run:
 .\.venv\Scripts\python.exe build.py
 ```
 
-The build creates `dist/Link to Audio.exe` with the waveform icon. The bundled
+The build creates `dist/RevTek Link2Audio.exe` with the RTS icon. The bundled
 media tools make the executable larger, but users only need this one file.
 Build tooling: [PyInstaller](https://pyinstaller.org/en/stable/usage.html).
 
@@ -77,7 +80,7 @@ After FFmpeg has been provisioned, run:
 To test the packaged worker and its bundled tools instead:
 
 ```powershell
-$env:TEST_APP_EXE = (Resolve-Path '.\dist\Link to Audio.exe').Path
+$env:TEST_APP_EXE = (Resolve-Path '.\dist\RevTek Link2Audio.exe').Path
 .\.venv\Scripts\python.exe -m unittest -v
 Remove-Item Env:TEST_APP_EXE
 ```
@@ -88,3 +91,9 @@ It does not require an external video service.
 
 References: [yt-dlp documentation](https://github.com/yt-dlp/yt-dlp#readme),
 [static-ffmpeg](https://github.com/zackees/static_ffmpeg).
+
+## RTS identity
+
+The interface uses the RevTek Studios folded R mark, Abyss blue-black surfaces,
+Ion cyan actions, cool silver text, and consistent semantic status colors. See [BRAND.md](BRAND.md) for the
+reusable palette, logo assets, and guidance for future RTS products.
